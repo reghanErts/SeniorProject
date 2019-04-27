@@ -1,7 +1,6 @@
 import numpy as np
 import random
 import math
-import matplotlib.pyplot as plt
 from scipy.stats import truncnorm
 import pandas as pd
 import csv
@@ -37,7 +36,7 @@ class NeuralNetwork:
                 if not hidden_layer_weights:
                     #sets the weight values:
                     #if none random
-                    #if place it in the array at the whatever iterantion we are on
+                    #if place it in the array at the whatever iteration we are on
                     self.hidden_layer.neurons[hidden].weights.append(random.random())
                 else:
                     self.hidden_layer.neurons[hidden].weights.append(hidden_layer_weights[weight_no])
@@ -83,7 +82,7 @@ class NeuralNetwork:
         #   "who" and "wih" are the index of weights from hidden to out layer neurons and input to hidden layer neurons 
         #print("Im here *********************************")
         self.feed_forward(training_inputs)
-        print("feed_forward(training_inputs): ",self.feed_forward(training_inputs))
+        #print("feed_forward(training_inputs): ",self.feed_forward(training_inputs))
         #print("Im here *********************************")
         #out neurons deltas
         
@@ -312,7 +311,8 @@ def first_array(small_array):
     attributes = []
     target = []
     for i in range(len(small_array)):
-        if i < (len(small_array)-1):
+        if i < (3):
+            #(len(small_array)-1)
             attributes.append(small_array[i])
         else:
             target.append(small_array[i])
@@ -354,6 +354,11 @@ if __name__ == "__main__":
     for a in range(len(resultTrain)):
         big_data.append(first_array(resultTrain[a]))    
     #print(big_data)
+
+    big_data_validate = []
+    for b in range(len(resultTest)):
+        big_data_validate.append(first_array(resultTest[b]))
+    #print(big_data_validate)
  
     '''nn = NeuralNetwork(2, 2, 1, hidden_layer_weights=[0.15, 0.2, 0.25, 0.3], hidden_layer_bias=0.35, output_layer_weights=[0.4, 0.45, 0.5, 0.55], output_layer_bias=0.6)
     for i in range(10000):
@@ -371,58 +376,77 @@ if __name__ == "__main__":
 #     [[1, 1], [0]]
 # ]
 test = []
-nn = NeuralNetwork(len(big_data[0][0]), len(big_data[0][1]), 5)
+you_got_one = 0
+you_got_zero = 0
+count = 0
+nn = NeuralNetwork(len(big_data[0][0]), len(big_data[0][1]), 4)
 #print("big D:",len(big_data[0][0]))
 #print("big D2:", len(big_data[0][1]))
-for i in range(len(big_data)-900):
-    for j in range(len(big_data[i])):
+for i in range(len(big_data)-500):
+    
+    print("hello**************************************************************************************")
+    training_inputs = big_data[i][0]
+    training_outs = big_data[i][1]
 
-        #training_inputs, training_outs = random.choice(big_data)
-        training_inputs = big_data[i][0]
-        training_outs = big_data[i][1]
+#training_inputs, training_outs = random.choice(big_data)
 
-        '''training_test_inputs = [23.3729305949,3.48457837330, 32.456765]
-        training_test_output= [1]
-        nn.train(training_test_inputs, training_test_output)
+    '''training_test_inputs = [23.3729305949,3.48457837330, 32.456765]
+    training_test_output= [1]
+    nn.train(training_test_inputs, training_test_output)
+    
+    '''
+    print("tin:", training_inputs)
+    print("training-outputs value: ", training_outs)
+    
+    #print("touXXXXXXhv;lvgkjvgf'[cf]:", training_outs)
+    #nn.feed_forward(training_inputs)
+    #nn.train(training_inputs, training_outs)
+    #nn.inspect()
+
+    print("hello: ", nn.train(training_inputs, training_outs))
+    print("i ,  err: ", i, nn.calc_total_err(big_data))
+    #print("evaluated outs: ", nn.feed_forward(training_inputs))
+    
+    '''for b in range(len(big_data[i][1])):
+        print("B is ", b)
+        print("len:", len(big_data[i][1]))'''
         
-        '''
-        print("tin:", training_inputs)
-        print("training-outputs len1: ", training_outs)
-        #print("hello")
-        print("touXXXXXXhv;lvgkjvgf'[cf]:", len(training_outs) )
-        #nn.feed_forward(training_inputs)
-        #nn.train(training_inputs, training_outs)
-        #nn.inspect()
-        print("hello: ", nn.train(training_inputs, training_outs))
-        print("i ,  err: ", i, nn.calc_total_err(big_data))
-        you_got_one = 0
-        you_got_zero = 0
-        count = 0
-        '''for b in range(len(big_data[i][1])):
-            print("B is ", b)
-            print("len:", len(big_data[i][1]))
-            
-            
-        #fir every instcance if the perdiction is correct add it to a count and at the end divide by total 
-        # CHNAGE TH
-        # E TRAINING IN AND TRAING OUT TO WORK WITH JUST THE INSTANCES
-            outs= nn.feed_forward(training_inputs)
-            print("outs:", outs)
-            #print("training-outs: ", nn.feed_forward(training_inputs))
-            if outs[0] >= .5:
-                print("print you got this yes: ", you_got_one)
-                you_got_one += 1
-            else :
-                print("print you got this no: ", you_got_zero)
-                you_got_zero += 1
+        
+    #fir every instcance if the perdiction is correct add it to a count and at the end divide by total 
+    # CHNAGE TH
+    # E TRAINING IN AND TRAING OUT TO WORK WITH JUST THE INSTANCES
+    outs= nn.feed_forward(training_inputs)
+    print("outs:", outs)
+    #print("training-outs: ", nn.feed_forward(training_inputs))
+    if outs[0] > .5 :
+        if  training_outs[0] == 1.0:
+            print("you got a 1 : ", you_got_one)
+            you_got_one += 1
+        else:
+            print ("wrong")
+            print("outs *******************************", training_outs)    
+    elif outs[0] < .49 :
+        if training_outs[0] == 0:
+            print("you got a 0: ", you_got_zero)
+            you_got_zero += 1
+        else:
+            print( "you go thtis wrong") 
                 
             
-            count = you_got_one + you_got_zero
-            print("count: ", count)
-            print("length: ",len(training_outs))
-            calc_accuracy = (count / len(training_outs))
-            print("accuracy: ",calc_accuracy )    '''
-            
-print("len:", len(big_data[i][1]))
-    
+count = you_got_one + you_got_zero
+print("count: ", count)
+print("length: ",len(big_data))
+calc_accuracy = (count / 448)
+average = calc_accuracy * 100
+print("accuracy: ",average, "%" )    
+                
+#print("len:", len(big_data[i][1]))
+'''for val in range(len(big_data_validate)):
+    training_inputs_val = big_data_validate[val][0]
+    training_outs_val = big_data_validate[val][1]
+    #training_inputs_val, training_outs_val = random.choice(big_data)
+    print ("nn:" , nn.feed_forward(training_inputs_val))
+    print("value, in :", val, training_inputs_val)
+    print("tr val: ", training_outs_val)'''
+        
     #print("touXXXXXXhv;lvgkjvgf'[cf]:", training_outs)
